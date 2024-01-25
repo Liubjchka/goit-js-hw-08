@@ -66,36 +66,12 @@ const images = [
 
 const galleryEl = document.querySelector(".gallery");
 
-let lightbox;
-
-galleryEl.addEventListener("click", (event) => {
-  event.preventDefault();
-
-  if (event.target.nodeName === "gallery-image") {
-    const largeImageSourceEl = event.target.dataset.source;
-
-    lightbox = basicLightbox.create(
-      `<img width='800' height='600' src='${largeImageSourceEl}'>`,
-
-      {
-        onShow: () => {
-          document.addEventListener("keydown", handleKeyDown);
-        },
-        onClose: () => {
-          document.removeEventListener("keydown", handleKeyDown);
-        },
-      }
-    );
-
-    lightbox.show();
-  }
-});
-
-function galleryTemplates() {
+function galleryTemplates({ preview, original, description }) {
   const galleryItemsEl = images
     .map(({ preview, original, description }) => {
       return `<li class="gallery-item">
-    <a class="gallery-link" href="${original}">
+    <a class="gallery-link"
+    href="${original}">
       <img
         class="gallery-image"
         src="${preview}"
@@ -103,25 +79,51 @@ function galleryTemplates() {
         alt="${description}"
       />
     </a>
-  </li>
-`;
+  </li>`;
     })
-    .join("/n");
+    .join("");
 
   galleryEl.innerHTML = galleryItemsEl;
 }
 
 galleryTemplates(images);
 
-function handleKeyDown(event) {
-  if (event.key === "Escape") {
-    basicLightbox.close();
-    document.removeEventListener("keydown", handleKeyDown);
-  }
-}
+// ===========
 
-function closeCurrentlightbox() {
-  if (lightbox && lightbox.visible()) {
-    lightbox.close();
+galleryEl.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  if (event.target === event.currentTarget) {
+    const largeImageSourceEl = event.target.dataset.source;
+    return lightbox(image);
+  }
+});
+
+// =======
+
+function lightbox(image) {
+  const lightbox = basicLightbox.create(
+    `<img 
+   class="gallery-image"
+      src="${image.original}"
+      data-source="${image.original}"
+      alt="${image.description}"/>`,
+
+    {
+      onShow: (instance) => {
+        document.addEventListener("keydown", handleKeyDown);
+      },
+      onClose: (instance) => {
+        document.removeEventListener("keydown", handleKeyDown);
+      },
+    }
+  );
+
+  lightbox.show();
+
+  function handleKeyDown(event) {
+    if (event.key === "Escape") {
+      closeLightbox();
+    }
   }
 }
