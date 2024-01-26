@@ -86,7 +86,6 @@ function galleryTemplates(images) {
         src="${preview}"
         data-source="${original}"
         alt="${description}"
-        width="360px"
       />
     </a>
   </li>`;
@@ -99,7 +98,7 @@ function galleryTemplates(images) {
 galleryTemplates(images);
 
 function lightbox({ preview, original, description }) {
-  const lightbox = basicLightbox.create(
+  const lightboxInstanceEl = basicLightbox.create(
     `<img 
    class="gallery-image"
       src="${original}"
@@ -116,11 +115,11 @@ function lightbox({ preview, original, description }) {
     }
   );
 
-  lightbox.show();
+  lightboxInstanceEl.show();
 
   function handleKeyDown(event) {
     if (event.key === "Escape") {
-      closeLightbox();
+      lightboxInstanceEl.close();
     }
   }
 }
