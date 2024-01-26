@@ -90,7 +90,7 @@ function galleryTemplates(images) {
     </a>
   </li>`;
     })
-    .join("");
+    .join("\n");
 
   galleryEl.innerHTML = galleryItemsEl;
 }
