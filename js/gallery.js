@@ -66,7 +66,16 @@ const images = [
 
 const galleryEl = document.querySelector(".gallery");
 
-function galleryTemplates({ preview, original, description }) {
+galleryEl.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  if (event.target === event.currentTarget) return;
+  const dataSource = event.target.dataset.source;
+  const image = images.find((item) => item.original === dataSource);
+  lightbox(image);
+});
+
+function galleryTemplates(images) {
   const galleryItemsEl = images
     .map(({ preview, original, description }) => {
       return `<li class="gallery-item">
@@ -77,6 +86,7 @@ function galleryTemplates({ preview, original, description }) {
         src="${preview}"
         data-source="${original}"
         alt="${description}"
+        width="360px"
       />
     </a>
   </li>`;
@@ -88,26 +98,13 @@ function galleryTemplates({ preview, original, description }) {
 
 galleryTemplates(images);
 
-// ===========
-
-galleryEl.addEventListener("click", (event) => {
-  event.preventDefault();
-
-  if (event.target === event.currentTarget) {
-    const largeImageSourceEl = event.target.dataset.source;
-    return lightbox(image);
-  }
-});
-
-// =======
-
-function lightbox(image) {
+function lightbox({ preview, original, description }) {
   const lightbox = basicLightbox.create(
     `<img 
    class="gallery-image"
-      src="${image.original}"
-      data-source="${image.original}"
-      alt="${image.description}"/>`,
+      src="${original}"
+      data-source="${original}"
+      alt="${description}"/>`,
 
     {
       onShow: (instance) => {
